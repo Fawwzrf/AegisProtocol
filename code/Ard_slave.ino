@@ -15,8 +15,8 @@ const int correctPIN[4] = {6, 7, 8, 9};
 const int p_pir = 2;      // Sensor Gerak PIR
 const int p_buzzer = 3;   // Buzzer Aktif
 const int p_red = 4;      // LED Merah (Status Terkunci/Lockdown)
-const int p_green = 5;    // LED Hijau (Status Terbuka)
-const int p_yellow = 6;   // LED Kuning (Status Berproses)
+const int p_blue = 5;    // LED Biru
+const int p_green = 6;   // LED Hijau (Status Terbuka)
 const int p_vib = A0;     // Sensor Getaran (Piezo/Vibration)
 
 void setup() {
@@ -32,8 +32,8 @@ void setup() {
   pinMode(p_pir, INPUT); 
   pinMode(p_buzzer, OUTPUT);
   pinMode(p_red, OUTPUT); 
-  pinMode(p_green, OUTPUT); 
-  pinMode(p_yellow, OUTPUT);
+  pinMode(p_blue, OUTPUT); 
+  pinMode(p_green, OUTPUT);
   
   digitalWrite(p_red, HIGH);    // Nyalakan LED merah saat standby
   Serial.println(F("[BOOT] Security Kernel Active. Ready to validate."));
@@ -106,14 +106,14 @@ void executeOpen() {
   
   // Gerakkan servo perlahan dari 0 ke 90 derajat
   for (int pos = 0; pos <= 90; pos += 5) {
-    myServo.write(pos); 
-    digitalWrite(p_yellow, !digitalRead(p_yellow)); // Kedipkan LED kuning
+    myServo.write(pos);
+    // Kedipkan LED kuning (merah + hijau)
+    digitalWrite(p_red, !digitalRead(p_red)); 
+    digitalWrite(p_green, !digitalRead(p_green)); 
     delay(50);
   }
   
-  digitalWrite(p_yellow, LOW); 
-  digitalWrite(p_green, HIGH); // Nyalakan LED hijau (Terbuka)
-  
+  digitalWrite(p_red, LOW); // matikan LED merah agar lampu berubah hijau
   delay(5000); // Tunggu 5 detik (sinkron dengan tampilan Master)
 
   systemState = 2;             // Status: Menutup
